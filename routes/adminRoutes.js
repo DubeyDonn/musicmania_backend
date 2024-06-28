@@ -6,12 +6,14 @@ import {
   newArtist,
   newAlbum,
   newTrack,
+  login,
 } from "../controllers/adminController.js";
+import auth from "../middlewares/adminAuthCheck.js";
 
-router.post("/login");
-router.post("/new-plan", newPlan);
-router.post("/artist", newArtist);
-router.post("/album", newAlbum);
-router.post("/track", newTrack);
+router.post("/login", login);
+router.post("/new-plan", auth, newPlan);
+router.post("/artist", auth, newArtist);
+router.post("/album", auth, newAlbum);
+router.post("/track", auth, newTrack);
 
 export default router;

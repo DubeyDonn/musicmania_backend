@@ -10,6 +10,17 @@ import { Song } from "../models/Track.js";
  * Artist
  */
 
+export function allArtists(req, res, next) {
+  Artist.find()
+    .populate("albums")
+    .then((artists) => {
+      res.status(200).json(artists);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+    });
+}
+
 export function topArtist(req, res, next) {
   Artist.find({
     genres: { $in: ["rock", "pop", "bollywood", "folk"] },
@@ -39,6 +50,18 @@ export function getAlbumsByArtis(req, res, next) {
 /**
  * ALBUMS
  */
+
+export function allAlbums(req, res, next) {
+  Album.find()
+    .populate("tracks")
+    .populate("artist")
+    .then((albums) => {
+      res.status(200).json(albums);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+    });
+}
 
 export function topAlbums(req, res, next) {
   Album.find({
@@ -99,7 +122,8 @@ export async function playTrack(req, res, next) {
     const path = "s3_musics/" + track.fileName;
     const stat = statSync(path);
     const fileSize = stat.size;
-    const range = req.headers.range;
+    const range = req.headers.range ? req.headers.range : "bytes=0-";
+
     if (range) {
       const parts = range.replace(/bytes=/, "").split("-");
       const start = parseInt(parts[0], 10);
@@ -122,28 +146,4 @@ export async function playTrack(req, res, next) {
   } else {
     res.status(404).json("Audio Does not exist");
   }
-}
-
-export async function addTrack(req, res, next) {
-  console.log(req.body);
-  const { name, artist, album, genres, duration, fileName } = req.body;
-  const track = new Song({
-    name,
-    artist,
-    album,
-    genres,
-    duration,
-    fileName,
-  });
-
-  console.log(track);
-
-  track
-    .save()
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
 }

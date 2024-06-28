@@ -88,7 +88,7 @@ export function onLogin(req, res, next) {
         { expiresIn: "90d" }
       );
 
-      res.status(200).json(token);
+      res.status(200).json({ token: token, userId: loginUser._id.toString() });
     })
     .catch((err) => {
       if (!err.statusCode) {

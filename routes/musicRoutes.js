@@ -9,27 +9,32 @@ import {
   getAlbumDetails,
   getTrackDetails,
   playTrack,
-  addTrack,
+  allArtists,
+  allAlbums,
 } from "../controllers/musicController.js";
 
 /**
  * Artist
  */
-// ALL Artist list
-router.get("/artist", auth, topArtist);
+//All Artist
+router.get("/artist", auth, allArtists);
+// Top Artist list
+router.get("/topArtist", auth, topArtist);
 //ALL albums of Artist
 router.get("/artist/:id", auth, getAlbumsByArtis);
 
 /**
- * ALL Albums
+ * Albums
  */
-router.get("/album", auth, topAlbums);
+router.get("/album", auth, allAlbums);
+router.get("/topAlbum", auth, topAlbums);
 router.get("/album/:id", auth, getAlbumDetails);
 
-router.post("/track", auth, addTrack);
 router.get("/track/:id", auth, getTrackDetails);
-router.get("/play/:id", auth, playTrack);
+router.get("/play/:id", playTrack);
 
-router.use("/", auth, topAlbums);
+router.use("/", auth, (req, res, next) => {
+  res.status(404).json({ message: "Not Found" });
+});
 
 export default router;

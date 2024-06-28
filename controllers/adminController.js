@@ -2,6 +2,54 @@ import { Plan } from "../models/plan.js";
 import { Artist } from "../models/Artist.js";
 import { Album } from "../models/Album.js";
 import { Song } from "../models/Track.js";
+import { Admin } from "../models/Admin.js";
+import bcryptjs from "bcryptjs";
+import jsonwebtoken from "jsonwebtoken";
+import { APP_KEY } from "../configs/appConst.js";
+
+const { sign } = jsonwebtoken;
+const { compare } = bcryptjs;
+
+export function login(req, res, next) {
+  const { username, password } = req.body;
+  console.log(username, password);
+  let loginAdmin;
+  Admin.findOne({ username: username })
+    .then((admin) => {
+      if (!admin) {
+        const error = new Error("User not found!");
+        error.statusCode = 404;
+        throw error;
+      }
+      loginAdmin = admin;
+      return compare(password, admin.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual) {
+        const error = new Error("Wrong Password!");
+        error.statusCode = 401;
+        throw error;
+      }
+      const token = sign(
+        {
+          username: username,
+          adminId: loginAdmin._id.toString(),
+          userType: "admin",
+        },
+        APP_KEY,
+        { expiresIn: "1d" }
+      );
+      res
+        .status(200)
+        .json({ token: token, adminId: loginAdmin._id.toString() });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+}
 
 /**
  * Controller Functions
