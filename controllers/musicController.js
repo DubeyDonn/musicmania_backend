@@ -91,6 +91,18 @@ export function getAlbumDetails(req, res, next) {
     });
 }
 
+export function allTracks(req, res, next) {
+  Song.find()
+    .populate("album")
+    .populate("artist")
+    .then((tracks) => {
+      res.status(200).json(tracks);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+    });
+}
+
 export function getTrackDetails(req, res, next) {
   const trackId = req.params.id;
   Song.findById(trackId)
@@ -102,6 +114,35 @@ export function getTrackDetails(req, res, next) {
     .catch((err) => {
       err.statusCode = 500;
       next(err);
+    });
+}
+
+export function editTrack(req, res, next) {
+  const trackId = req.params.id;
+  const { name, duration, language } = req.body;
+  Song.findById(trackId)
+    .then((track) => {
+      track.name = name;
+      track.duration = duration;
+      track.language = language;
+      return track.save();
+    })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(503).json(err);
+    });
+}
+
+export function deleteTrack(req, res, next) {
+  const trackId = req.params.id;
+  Song.findByIdAndDelete(trackId)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(503).json(err);
     });
 }
 

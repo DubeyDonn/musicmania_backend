@@ -11,13 +11,16 @@ import {
   playTrack,
   allArtists,
   allAlbums,
+  allTracks,
+  editTrack,
+  deleteTrack,
 } from "../controllers/musicController.js";
 
 /**
  * Artist
  */
 //All Artist
-router.get("/artist", auth, allArtists);
+router.get("/allArtist", auth, allArtists);
 // Top Artist list
 router.get("/topArtist", auth, topArtist);
 //ALL albums of Artist
@@ -26,11 +29,15 @@ router.get("/artist/:id", auth, getAlbumsByArtis);
 /**
  * Albums
  */
-router.get("/album", auth, allAlbums);
+router.get("/allAlbum", auth, allAlbums);
 router.get("/topAlbum", auth, topAlbums);
 router.get("/album/:id", auth, getAlbumDetails);
 
+router.get("/allTrack", auth, allTracks);
 router.get("/track/:id", auth, getTrackDetails);
+router.put("/track/edit/:id", auth, editTrack);
+router.delete("/track/delete/:id", auth, deleteTrack);
+
 router.get("/play/:id", playTrack);
 
 router.use("/", auth, (req, res, next) => {

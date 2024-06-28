@@ -77,7 +77,8 @@ export function newPlan(req, res, next) {
 }
 
 export function newArtist(req, res, next) {
-  const { name, genres, image } = req.body;
+  const { name, genres } = req.body;
+  const image = req.file.filename;
   const artist = new Artist({
     name: name,
     genres: genres,
@@ -98,7 +99,8 @@ export function newArtist(req, res, next) {
 }
 
 export function newAlbum(req, res, next) {
-  const { artistId, name, genres, image } = req.body;
+  const { artistId, name, genres } = req.body;
+  const image = req.file.filename;
 
   let currentArtist;
   Artist.findById(artistId)
@@ -126,8 +128,8 @@ export function newAlbum(req, res, next) {
 }
 
 export function newTrack(req, res, next) {
-  const { albumId, name, duration, artworkImage, language, fileName } =
-    req.body;
+  const { albumId, name, duration, artworkImage, language } = req.body;
+  const fileName = req.file.filename;
   let currentAlbum;
   Album.findById(albumId)
     .populate("artist")
