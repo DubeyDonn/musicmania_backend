@@ -17,7 +17,7 @@ const AlbumSchema = new Schema({
   tracks: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Track",
+      ref: "Song",
     },
   ],
   artist: {

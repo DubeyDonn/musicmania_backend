@@ -12,9 +12,9 @@ import auth from "../middlewares/adminAuthCheck.js";
 import upload from "../middlewares/saveFile.js";
 
 router.post("/login", login);
-router.post("/new-plan", auth, upload.single("image"), newPlan);
-router.post("/artist", auth, upload.single("image"), newArtist);
-router.post("/album", auth, upload.single("image"), newAlbum);
-router.post("/track", auth, upload.single("songFile"), newTrack);
+router.post("/addPlan", auth, upload.single("image"), newPlan);
+router.post("/addArtist", auth, upload.single("image"), newArtist);
+router.post("/addAlbum", auth, upload.single("image"), newAlbum);
+router.post("/addTrack", auth, upload.single("songFile"), newTrack);
 
 export default router;

@@ -5,6 +5,7 @@ import { Plan } from "../models/plan.js";
 import { Artist } from "../models/Artist.js";
 import { Album } from "../models/Album.js";
 import { Song } from "../models/Track.js";
+import fs from "fs";
 
 /**
  * Artist
@@ -34,12 +35,14 @@ export function topArtist(req, res, next) {
     });
 }
 
-export function getAlbumsByArtis(req, res, next) {
+export function getAlbumsByArtist(req, res, next) {
   const artistId = req.params.id;
   console.log(artistId);
   Artist.findById(artistId)
     .populate("albums")
     .then((artist) => {
+      artist.popularity += 1;
+      artist.save();
       res.status(200).json(artist);
     })
     .catch((err) => {
@@ -47,10 +50,39 @@ export function getAlbumsByArtis(req, res, next) {
     });
 }
 
+export function editArtist(req, res, next) {
+  const artistId = req.params.id;
+  const { name, genres } = req.body;
+  Artist.findById(artistId)
+    .then((artist) => {
+      artist.name = name;
+      artist.genres = genres;
+      return artist.save();
+    })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(503).json(err);
+    });
+}
+
+export function deleteArtist(req, res, next) {
+  const artistId = req.params.id;
+  Artist.findByIdAndDelete(artistId)
+    .then((result) => {
+      //unlink the image
+      fs.unlinkSync("uploads/" + result.image);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(503).json(err);
+    });
+}
+
 /**
  * ALBUMS
  */
-
 export function allAlbums(req, res, next) {
   Album.find()
     .populate("tracks")
@@ -91,6 +123,39 @@ export function getAlbumDetails(req, res, next) {
     });
 }
 
+export function editAlbum(req, res, next) {
+  const albumId = req.params.id;
+  const { name, genres } = req.body;
+  Album.findById(albumId)
+    .then((album) => {
+      album.name = name;
+      album.genres = genres;
+      return album.save();
+    })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(503).json(err);
+    });
+}
+
+export function deleteAlbum(req, res, next) {
+  const albumId = req.params.id;
+  Album.findByIdAndDelete(albumId)
+    .then((result) => {
+      //unlink the image
+      fs.unlinkSync("uploads/" + result.image);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(503).json(err);
+    });
+}
+
+/**
+ * Tracks
+ */
 export function allTracks(req, res, next) {
   Song.find()
     .populate("album")
@@ -139,6 +204,8 @@ export function deleteTrack(req, res, next) {
   const trackId = req.params.id;
   Song.findByIdAndDelete(trackId)
     .then((result) => {
+      //unlink the file
+      fs.unlinkSync("musics/" + result.fileName);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -160,7 +227,7 @@ export async function playTrack(req, res, next) {
   console.log(track);
 
   if (track?._id) {
-    const path = "s3_musics/" + track.fileName;
+    const path = "musics/" + track.fileName;
     const stat = statSync(path);
     const fileSize = stat.size;
     const range = req.headers.range ? req.headers.range : "bytes=0-";

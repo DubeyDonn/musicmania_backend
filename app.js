@@ -4,7 +4,7 @@ import express, { static as staticc } from "express"; // Ensure express is impor
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import parser from "body-parser";
-const { json } = parser;
+const { json, urlencoded } = parser;
 import mongoose from "mongoose";
 const { connect } = mongoose;
 
@@ -23,8 +23,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-app.use(json({ extended: false }));
 app.use(cors());
+
+// app.use(json({ extended: false }));
+app.use(urlencoded({ limit: "100mb", extended: true, parameterLimit: 50000 }));
+app.use(json({ limit: "100mb" }));
+
 app.use(cookieParser());
 
 app.use("/s3_musics", staticc(join(__dirname, "s3_musics")));
