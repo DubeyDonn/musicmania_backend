@@ -9,6 +9,7 @@ import fs from "fs";
 import { UserSongPlays } from "../models/UserSongPlays.js";
 import { exit } from "process";
 import axios from "axios";
+import { recommendationUrl } from "../configs/appConst.js";
 
 /**
  * Artist
@@ -301,7 +302,7 @@ export async function recommendSongs(req, res, next) {
   try {
     // Call the Flask API
     const response = await axios.get(
-      `http://127.0.0.1:5000/recommend?user_id=${userId}`
+      recommendationUrl`/recommend?user_id=${userId}`
     );
 
     // Send the recommendations back to the client
