@@ -18,8 +18,10 @@ import {
   deleteArtist,
   editAlbum,
   deleteAlbum,
+  recommendSongs,
 } from "../controllers/musicController.js";
 import adminAuthCheck from "../middlewares/adminAuthCheck.js";
+import { authenticateJWT } from "../middlewares/authenticateJWT.js";
 
 /**
  * Artist
@@ -46,7 +48,12 @@ router.get("/allTrack", auth, allTracks);
 router.get("/track/:id", auth, getTrackDetails);
 router.put("/track/edit/:id", adminAuthCheck, editTrack);
 router.delete("/track/delete/:id", adminAuthCheck, deleteTrack);
-router.get("/play/:id", playTrack);
+router.get("/play/:id", authenticateJWT, playTrack);
+
+/**
+ * Recommend by User
+ */
+router.get("/recommend", authenticateJWT, recommendSongs);
 
 router.use("/", auth, (req, res, next) => {
   res.status(404).json({ message: "Not Found" });

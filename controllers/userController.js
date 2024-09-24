@@ -77,7 +77,7 @@ export function onLogin(req, res, next) {
     })
     .then((result) => {
       if (!result) {
-        const err = new Error("Passwod does not match!");
+        const err = new Error("Password does not match!");
         err.statusCode = 401;
         throw err;
       }
