@@ -42,6 +42,11 @@ const UserSchema = new Schema({
   membershipEndDate: {
     type: Date,
   },
+
+  type: {
+    type: String,
+    default: "user",
+  },
 });
 
 const User = model("User", UserSchema);

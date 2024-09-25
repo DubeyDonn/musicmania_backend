@@ -16,6 +16,10 @@ const AdminSchema = new Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    default: "admin",
+  },
 });
 
 const Admin = model("Admin", AdminSchema);

@@ -302,8 +302,10 @@ export async function recommendSongs(req, res, next) {
   try {
     // Call the Flask API
     const response = await axios.get(
-      recommendationUrl`/recommend?user_id=${userId}`
+      `${recommendationUrl}/recommend?user_id=${userId}`
     );
+
+    console.log(response.data);
 
     // Send the recommendations back to the client
     res.json(response.data);

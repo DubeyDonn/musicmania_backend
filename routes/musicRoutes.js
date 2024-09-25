@@ -26,26 +26,26 @@ import { authenticateJWT } from "../middlewares/authenticateJWT.js";
 /**
  * Artist
  */
-router.get("/allArtist", auth, allArtists);
-router.get("/topArtist", auth, topArtist);
-router.get("/artist/:id", auth, getAlbumsByArtist);
+router.get("/allArtist", allArtists);
+router.get("/topArtist", topArtist);
+router.get("/artist/:id", getAlbumsByArtist);
 router.put("/artist/edit/:id", adminAuthCheck, editArtist);
 router.delete("/artist/delete/:id", adminAuthCheck, deleteArtist);
 
 /**
  * Albums
  */
-router.get("/allAlbum", auth, allAlbums);
-router.get("/topAlbum", auth, topAlbums);
-router.get("/album/:id", auth, getAlbumDetails);
+router.get("/allAlbum", allAlbums);
+router.get("/topAlbum", topAlbums);
+router.get("/album/:id", getAlbumDetails);
 router.put("/album/edit/:id", adminAuthCheck, editAlbum);
 router.delete("/album/delete/:id", adminAuthCheck, deleteAlbum);
 
 /**
  * Tracks
  */
-router.get("/allTrack", auth, allTracks);
-router.get("/track/:id", auth, getTrackDetails);
+router.get("/allTrack", allTracks);
+router.get("/track/:id", getTrackDetails);
 router.put("/track/edit/:id", adminAuthCheck, editTrack);
 router.delete("/track/delete/:id", adminAuthCheck, deleteTrack);
 router.get("/play/:id", authenticateJWT, playTrack);
@@ -55,7 +55,7 @@ router.get("/play/:id", authenticateJWT, playTrack);
  */
 router.get("/recommend", authenticateJWT, recommendSongs);
 
-router.use("/", auth, (req, res, next) => {
+router.use("/", (req, res, next) => {
   res.status(404).json({ message: "Not Found" });
 });
 

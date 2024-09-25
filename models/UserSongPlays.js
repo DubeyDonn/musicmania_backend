@@ -18,6 +18,11 @@ const UserSongPlaysSchema = new Schema({
     type: Number,
     default: 0,
   },
+
+  type: {
+    type: String,
+    default: "userSongPlays",
+  },
 });
 
 const UserSongPlays = model("UserSongPlays", UserSongPlaysSchema);
