@@ -19,6 +19,8 @@ import {
   editAlbum,
   deleteAlbum,
   recommendSongs,
+  getSongsByArtist,
+  getSongsByAlbum,
 } from "../controllers/musicController.js";
 import adminAuthCheck from "../middlewares/adminAuthCheck.js";
 import { authenticateJWT } from "../middlewares/authenticateJWT.js";
@@ -49,6 +51,10 @@ router.get("/track/:id", getTrackDetails);
 router.put("/track/edit/:id", adminAuthCheck, editTrack);
 router.delete("/track/delete/:id", adminAuthCheck, deleteTrack);
 router.get("/play/:id", authenticateJWT, playTrack);
+
+router.get("/tracks/artist/:id", getSongsByArtist);
+
+router.get("/tracks/album/:id", getSongsByAlbum);
 
 /**
  * Recommend by User

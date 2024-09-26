@@ -23,7 +23,7 @@ const ArtistSchema = new Schema({
       ref: "Album",
     },
   ],
-  image: {
+  artworkImage: {
     type: String,
   },
   popularity: {

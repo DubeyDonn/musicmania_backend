@@ -34,6 +34,8 @@ app.use(cookieParser());
 app.use("/s3_musics", staticc(join(__dirname, "s3_musics")));
 app.use("/s3_artworks", staticc(join(__dirname, "s3_artworks")));
 
+app.use("/uploads", staticc(join(__dirname, "uploads")));
+
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 app.use("/music", sourceAuth, musicRoutes);

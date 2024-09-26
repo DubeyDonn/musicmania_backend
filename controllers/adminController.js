@@ -84,7 +84,7 @@ export function newArtist(req, res, next) {
     genres: genres,
     followers: [],
     albums: [],
-    image: image,
+    artworkImage: image,
     popularity: 0,
   });
   artist
@@ -109,7 +109,7 @@ export function newAlbum(req, res, next) {
       let album = new Album({
         name: name,
         genres: genres,
-        image: image,
+        artworkImage: image,
         tracks: [],
         artist: artist,
       });

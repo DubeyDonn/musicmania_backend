@@ -28,7 +28,7 @@ export function allArtists(req, res, next) {
 
 export function topArtist(req, res, next) {
   Artist.find({
-    genres: { $in: ["rock", "pop", "bollywood", "folk"] },
+    genres: { $in: ["Rock", "Pop", "Bollywood", "Folk"] },
   })
     .populate("albums")
     .then((artist) => {
@@ -41,7 +41,7 @@ export function topArtist(req, res, next) {
 
 export function getAlbumsByArtist(req, res, next) {
   const artistId = req.params.id;
-  console.log(artistId);
+  // console.log(artistId);
   Artist.findById(artistId)
     .populate("albums")
     .then((artist) => {
@@ -76,7 +76,7 @@ export function deleteArtist(req, res, next) {
   Artist.findByIdAndDelete(artistId)
     .then((result) => {
       //unlink the image
-      fs.unlinkSync("uploads/" + result.image);
+      fs.unlinkSync("uploads/" + result.artworkImage);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -101,7 +101,7 @@ export function allAlbums(req, res, next) {
 
 export function topAlbums(req, res, next) {
   Album.find({
-    genres: { $in: ["rock", "pop", "bollywood", "folk"] },
+    genres: { $in: ["Rock", "Pop", "Bollywood", "Folk"] },
   })
     .populate("tracks")
     .populate("artist")
@@ -149,7 +149,7 @@ export function deleteAlbum(req, res, next) {
   Album.findByIdAndDelete(albumId)
     .then((result) => {
       //unlink the image
-      fs.unlinkSync("uploads/" + result.image);
+      fs.unlinkSync("uploads/" + result.artworkImage);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -221,7 +221,7 @@ export function deleteTrack(req, res, next) {
 export async function playTrack(req, res, next) {
   const trackId = req.params.id;
 
-  console.log(trackId);
+  // console.log(trackId);
   // Check if 'id' is a valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(trackId)) {
     console.log("Invalid ID format");
@@ -230,7 +230,7 @@ export async function playTrack(req, res, next) {
 
   const track = await Song.findById(trackId);
 
-  console.log(track);
+  // console.log(track);
 
   if (track?._id) {
     const path = "musics/" + track.fileName;
@@ -265,7 +265,7 @@ export async function playTrack(req, res, next) {
             user: userId,
             song: trackId,
           });
-          console.log(userSongPlay);
+          // console.log(userSongPlay);
           if (userSongPlay) {
             userSongPlay.count += 1;
             await userSongPlay.save();
@@ -290,7 +290,7 @@ export async function playTrack(req, res, next) {
 }
 
 export async function recommendSongs(req, res, next) {
-  console.log("Recommend songs");
+  // console.log("Recommend songs");
 
   //if user is not authenticated
   if (!req.user) {
@@ -305,7 +305,7 @@ export async function recommendSongs(req, res, next) {
       `${recommendationUrl}/recommend?user_id=${userId}`
     );
 
-    console.log(response.data);
+    // console.log(response.data);
 
     // Send the recommendations back to the client
     res.json(response.data);
@@ -313,4 +313,30 @@ export async function recommendSongs(req, res, next) {
     console.error("Error calling recommendation API", error);
     res.status(500).send("Error fetching recommendations");
   }
+}
+
+export function getSongsByArtist(req, res, next) {
+  const artistId = req.params.id;
+  Song.find({ artist: artistId })
+    .populate("album")
+    .populate("artist")
+    .then((tracks) => {
+      res.status(200).json(tracks);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+    });
+}
+
+export function getSongsByAlbum(req, res, next) {
+  const albumId = req.params.id;
+  Song.find({ album: albumId })
+    .populate("album")
+    .populate("artist")
+    .then((tracks) => {
+      res.status(200).json(tracks);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+    });
 }
