@@ -22,6 +22,10 @@ const planSchema = new Schema({
     type: Number,
     required: true,
   },
+  type: {
+    type: String,
+    default: "plan",
+  },
 });
 
 const Plan = model("Plan", planSchema);

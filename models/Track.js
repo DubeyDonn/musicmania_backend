@@ -32,6 +32,10 @@ const SongSchema = new Schema({
   fileName: {
     type: String,
   },
+  type: {
+    type: String,
+    default: "song",
+  },
 });
 
 const Song = model("Song", SongSchema);

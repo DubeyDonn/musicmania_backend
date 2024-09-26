@@ -29,6 +29,10 @@ const ArtistSchema = new Schema({
   popularity: {
     type: Number,
   },
+  type: {
+    type: String,
+    default: "artist",
+  },
 });
 
 ArtistSchema.methods.addAlbum = function (album) {

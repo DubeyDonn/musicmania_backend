@@ -6,6 +6,10 @@ import { Artist } from "../models/Artist.js";
 import { Album } from "../models/Album.js";
 import { Song } from "../models/Track.js";
 import fs from "fs";
+import { UserSongPlays } from "../models/UserSongPlays.js";
+import { exit } from "process";
+import axios from "axios";
+import { recommendationUrl } from "../configs/appConst.js";
 
 /**
  * Artist
@@ -184,6 +188,7 @@ export function getTrackDetails(req, res, next) {
 
 export function editTrack(req, res, next) {
   const trackId = req.params.id;
+
   const { name, duration, language } = req.body;
   Song.findById(trackId)
     .then((track) => {
@@ -215,6 +220,7 @@ export function deleteTrack(req, res, next) {
 
 export async function playTrack(req, res, next) {
   const trackId = req.params.id;
+
   console.log(trackId);
   // Check if 'id' is a valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(trackId)) {
@@ -248,10 +254,63 @@ export async function playTrack(req, res, next) {
 
       res.writeHead(206, head);
       file.pipe(res);
+
+      // Update user song plays
+      if (req.user) {
+        console.log("Updating user song plays");
+
+        try {
+          const userId = req.user._id;
+          const userSongPlay = await UserSongPlays.findOne({
+            user: userId,
+            song: trackId,
+          });
+          console.log(userSongPlay);
+          if (userSongPlay) {
+            userSongPlay.count += 1;
+            await userSongPlay.save();
+          } else {
+            const newUserSongPlay = new UserSongPlays({
+              user: userId,
+              song: trackId,
+              count: 1,
+            });
+            await newUserSongPlay.save();
+          }
+        } catch (err) {
+          console.error("Error updating user song plays:", err);
+        }
+      }
     } else {
       res.status(404).json("Audio file Does not exist");
     }
   } else {
     res.status(404).json("Audio Does not exist");
+  }
+}
+
+export async function recommendSongs(req, res, next) {
+  console.log("Recommend songs");
+
+  //if user is not authenticated
+  if (!req.user) {
+    res.status(401).json("User is not authenticated");
+    return;
+  }
+  const userId = req.user._id;
+
+  try {
+    // Call the Flask API
+    const response = await axios.get(
+      `${recommendationUrl}/recommend?user_id=${userId}`
+    );
+
+    console.log(response.data);
+
+    // Send the recommendations back to the client
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error calling recommendation API", error);
+    res.status(500).send("Error fetching recommendations");
   }
 }

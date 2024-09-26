@@ -24,6 +24,10 @@ const AlbumSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Artist",
   },
+  type: {
+    type: String,
+    default: "album",
+  },
 });
 
 AlbumSchema.methods.addTrack = function (track) {
