@@ -340,3 +340,54 @@ export function getSongsByAlbum(req, res, next) {
       res.status(404).json(err);
     });
 }
+
+// /search/hello
+export function getSongsBySearch(req, res, next) {
+  const searchTerm = req.params.q;
+  const pipeline = [
+    {
+      $lookup: {
+        from: "artists", // The collection to join with
+        localField: "artist", // The field in the songs collection that refers to the artist ID
+        foreignField: "_id", // The field in the artists collection that is the artist's ID
+        as: "artist", // The name of the field to store artist
+      },
+    },
+    {
+      $unwind: "$artist", // Flatten the artist array
+    },
+    {
+      $lookup: {
+        from: "albums", // The collection to join with
+        localField: "album", // The field in the songs collection that refers to the album ID
+        foreignField: "_id", // The field in the albums collection that is the album's ID
+        as: "album", // The name of the field to store album
+      },
+    },
+    {
+      $unwind: "$album", // Flatten the album array
+    },
+    {
+      $match: {
+        $or: [
+          { name: { $regex: searchTerm, $options: "i" } }, // Match by song name (case-insensitive)
+          { "artist.name": { $regex: searchTerm, $options: "i" } }, // Match by artist name (case-insensitive)
+          { "album.name": { $regex: searchTerm, $options: "i" } }, // Match by album name (case-insensitive)
+        ],
+      },
+    },
+  ];
+
+  // Execute the query using MongoDB aggregation
+  mongoose.connection.db
+    .collection("songs")
+    .aggregate(pipeline)
+    .toArray((err, songs) => {
+      if (err) {
+        return res.status(500).json({ message: "Error searching songs" });
+      }
+
+      // Send back the matched songs
+      res.status(200).json(songs);
+    });
+}

@@ -21,6 +21,7 @@ import {
   recommendSongs,
   getSongsByArtist,
   getSongsByAlbum,
+  getSongsBySearch,
 } from "../controllers/musicController.js";
 import adminAuthCheck from "../middlewares/adminAuthCheck.js";
 import { authenticateJWT } from "../middlewares/authenticateJWT.js";
@@ -55,6 +56,8 @@ router.get("/play/:id", authenticateJWT, playTrack);
 router.get("/tracks/artist/:id", getSongsByArtist);
 
 router.get("/tracks/album/:id", getSongsByAlbum);
+
+router.get("/search/:q", getSongsBySearch);
 
 /**
  * Recommend by User
